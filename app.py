@@ -225,9 +225,11 @@ def show_batch_results(results: pd.DataFrame, report) -> None:
         )
 
     st.caption("Probabilitas adalah skor relatif model dan belum dikalibrasi sebagai peluang absolut.")
+    export_frame = results.copy()
+    export_frame["NPWP16"] = export_frame["NPWP16"].map(mask_npwp)
     st.download_button(
         "⬇️ Unduh hasil lengkap (CSV)",
-        data=to_csv_bytes(results),
+        data=to_csv_bytes(export_frame),
         file_name=f"prediksi_ketertagihan_{date.today().isoformat()}.csv",
         mime="text/csv",
         type="primary",
@@ -272,7 +274,7 @@ with st.sidebar:
     st.metric("Test F1-macro", "0,562")
     st.divider()
     st.checkbox("Tampilkan NPWP lengkap", value=False, key="show_full_npwp")
-    st.caption("Secara default NPWP dimasking di layar. File unduhan tetap memuat identitas lengkap.")
+    st.caption("NPWP dimasking secara default di layar dan pada file unduhan.")
     st.divider()
     st.warning("Baseline cross-sectional, belum validasi prospektif/temporal.")
     st.caption("Model tidak memakai SETOR_*, NILAI_SISA, atau tindakan penagihan sebagai fitur.")
