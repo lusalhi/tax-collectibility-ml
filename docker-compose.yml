@@ -1,0 +1,58 @@
+name: ketertagihan
+
+services:
+  app:
+    build: .
+    image: ketertagihan-app:latest
+    restart: unless-stopped
+    expose:
+      - "8501"          # hanya di jaringan internal compose, TIDAK di host
+    deploy:
+      resources:
+        limits:
+          memory: 4g     # agregasi kohir 200rb+ baris in-memory
+    networks: [internal]
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      - DOMAIN=${DOMAIN:-localhost}
+    depends_on:
+      app:
+        condition: service_healthy
+    networks: [internal]
+
+  # --- SSO gate (opsional, sesuai syarat README untuk akses shared) ---
+  # Jalankan: docker compose --profile sso up -d
+  # oauth2-proxy:
+  #   image: bitnami/oauth2-proxy:latest
+  #   profiles: ["sso"]
+  #   restart: unless-stopped
+  #   environment:
+  #     OAUTH2_PROXY_PROVIDER: "oidc"                 # Keycloak/EntraID internal
+  #     OAUTH2_PROXY_OIDC_ISSUER_URL: "${OIDC_ISSUER}"
+  #     OAUTH2_PROXY_CLIENT_ID: "${OIDC_CLIENT_ID}"
+  #     OAUTH2_PROXY_CLIENT_SECRET: "${OIDC_CLIENT_SECRET}"
+  #     OAUTH2_PROXY_COOKIE_SECRET: "${COOKIE_SECRET}"   # openssl rand -base64 32
+  #     OAUTH2_PROXY_COOKIE_SECURE: "true"
+  #     OAUTH2_PROXY_EMAIL_DOMAINS: "*"                 # ganti dengan domain instansi
+  #     OAUTH2_PROXY_UPSTREAMS: "http://app:8501"
+  #     OAUTH2_PROXY_REDIRECT_URL: "https://${DOMAIN:-localhost}/oauth2/callback"
+  #     OAUTH2_PROXY_PASS_ACCESS_TOKEN: "false"
+  #   depends_on: [app]
+  #   networks: [internal]
+
+networks:
+  internal:
+
+volumes:
+  caddy_data:
+  caddy_config:

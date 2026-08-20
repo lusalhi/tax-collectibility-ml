@@ -1,0 +1,44 @@
+# Reverse proxy TLS — satu-satunya pintu masuk dari luar.
+# Set DOMAIN di .env atau export sebelum up:
+#   DOMAIN=ketertagihan.internal.djp.go.id docker compose up -d
+#
+# Untuk uji coba lokal (tanpa domain): biarkan default localhost,
+# Caddy akan pakai CA internal (browser perlu trust sertifikatnya:
+#   docker compose exec caddy caddy trust  -- di mesin user)
+{
+    admin off
+}
+
+{$DOMAIN:localhost} {
+    # --- Gate autentikasi (aktifkan via profile: --profile sso) ---
+    # @public path /oauth2/*
+    # handle @public {
+    #     reverse_proxy oauth2-proxy:4180
+    # }
+    # reverse_proxy @none nonexistent  # fail-closed fallback
+
+    reverse_proxy app:8501 {
+        header_up X-Forwarded-Proto https
+    }
+
+    header {
+        Strict-Transport-Security "max-age=31536000"
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy no-referrer
+        # Cache-Control: no-store juga di-set Streamlit; ini lapisan kedua.
+        Cache-Control "no-store"
+    }
+
+    # Payload upload besar: batasi sesuai kontrak aplikasi (100MB/file).
+    request_body {
+        max_size 110MB
+    }
+
+    log {
+        output file /data/access.log {
+            roll_size 50MiB
+            roll_keep 10
+        }
+    }
+}

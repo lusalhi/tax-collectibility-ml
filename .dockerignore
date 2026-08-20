@@ -1,0 +1,11 @@
+.git
+.venv
+dataset
+notebooks
+tests
+__pycache__
+*.pyc
+.env
+Dockerfile
+docker-compose.yml
+deploy
