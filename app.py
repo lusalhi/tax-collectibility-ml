@@ -163,6 +163,14 @@ def mask_npwp(value) -> str:
     return f"{text[:4]}••••••••{text[-4:]}"
 
 
+def mask_nama(value) -> str:
+    """Mask nama WP: inisial tiap kata + jumlah karakter, mis. 'PT MAJU JAYA' -> 'PT M••• J•••'."""
+    if pd.isna(value) or not str(value).strip():
+        return "—"
+    words = str(value).strip().split()
+    return " ".join(w[0] + "•" * (len(w) - 1) for w in words)
+
+
 def show_report(report) -> None:
     with st.expander("Laporan penyiapan data", expanded=False):
         a, b, c = st.columns(3)
@@ -212,6 +220,7 @@ def show_batch_results(results: pd.DataFrame, report) -> None:
         display = results.sort_values(sort_column, ascending=False).copy()
         if not st.session_state.get("show_full_npwp", False):
             display["NPWP16"] = display["NPWP16"].map(mask_npwp)
+            display["NAMA_WP"] = display["NAMA_WP"].map(mask_nama)
         st.dataframe(
             display,
             width="stretch",
@@ -227,6 +236,7 @@ def show_batch_results(results: pd.DataFrame, report) -> None:
     st.caption("Probabilitas adalah skor relatif model dan belum dikalibrasi sebagai peluang absolut.")
     export_frame = results.copy()
     export_frame["NPWP16"] = export_frame["NPWP16"].map(mask_npwp)
+    export_frame["NAMA_WP"] = export_frame["NAMA_WP"].map(mask_nama)
     st.download_button(
         "⬇️ Unduh hasil lengkap (CSV)",
         data=to_csv_bytes(export_frame),
@@ -273,8 +283,8 @@ with st.sidebar:
     st.info("Mode lokal saja (127.0.0.1)")
     st.metric("Test F1-macro", "0,562")
     st.divider()
-    st.checkbox("Tampilkan NPWP lengkap", value=False, key="show_full_npwp")
-    st.caption("NPWP dimasking secara default di layar dan pada file unduhan.")
+    st.checkbox("Tampilkan NPWP & nama lengkap", value=False, key="show_full_npwp")
+    st.caption("NPWP dan nama WP dimasking secara default di layar dan pada file unduhan.")
     st.divider()
     st.warning("Baseline cross-sectional, belum validasi prospektif/temporal.")
     st.caption("Model tidak memakai SETOR_*, NILAI_SISA, atau tindakan penagihan sebagai fitur.")
