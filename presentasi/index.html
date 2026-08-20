@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediksi Ketertagihan WP — Paparan Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700;9..144,900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f5f1e6;
+  --paper2:#efe9d9;
+  --ink:#132a33;
+  --ink-soft:#3d5661;
+  --teal:#0f4c5c;
+  --teal-deep:#0b3140;
+  --brand:#176b73;
+  --gold:#c8862d;
+  --gold-soft:#e8c48a;
+  --red:#a84a35;
+  --green:#2e7d5b;
+  --line:rgba(19,42,51,.18);
+  --card:#fbf9f2;
+  --shadow:0 18px 50px -18px rgba(11,49,64,.35);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  color:var(--ink);
+  background:#0d222b;
+  overflow:hidden;
+}
+/* ---------- deck scaffolding ---------- */
+.deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+.slide{
+  position:absolute;width:1280px;height:720px;
+  background:var(--paper);
+  box-shadow:var(--shadow);
+  opacity:0;visibility:hidden;transform:translateY(14px) scale(.985);
+  transition:opacity .45s ease,transform .45s ease,visibility .45s;
+  overflow:hidden;
+}
+.slide.active{opacity:1;visibility:visible;transform:none}
+/* grain + vignette */
+.slide::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.slide::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(120% 90% at 50% 0%,transparent 60%,rgba(11,49,64,.06) 100%);
+}
+.slide-inner{position:relative;z-index:2;height:100%;padding:56px 72px 64px;display:flex;flex-direction:column}
+/* staggered reveal */
+.slide .rv{opacity:0;transform:translateY(16px)}
+.slide.active .rv{animation:rise .6s cubic-bezier(.2,.7,.2,1) forwards}
+.slide.active .rv:nth-child(1),.slide.active .d1{animation-delay:.05s}
+.slide.active .d2{animation-delay:.15s}
+.slide.active .d3{animation-delay:.25s}
+.slide.active .d4{animation-delay:.35s}
+.slide.active .d5{animation-delay:.45s}
+.slide.active .d6{animation-delay:.55s}
+@keyframes rise{to{opacity:1;transform:none}}
+/* typography */
+.kicker{
+  font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--brand);display:flex;align-items:center;gap:14px;
+}
+.kicker::before{content:"";width:34px;height:2px;background:var(--gold)}
+h1{font-family:'Fraunces',serif;font-weight:900;line-height:1.02}
+h2{font-family:'Fraunces',serif;font-weight:700;font-size:44px;line-height:1.05;margin:10px 0 6px}
+.sub{color:var(--ink-soft);font-size:17px;max-width:900px}
+.mono{font-family:'IBM Plex Mono',monospace}
+/* header/footer chrome */
+.chrome-top{display:flex;justify-content:space-between;align-items:flex-start}
+.pageno{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);letter-spacing:.2em}
+.chrome-bottom{
+  position:absolute;left:72px;right:72px;bottom:26px;z-index:3;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;
+  color:rgba(19,42,51,.55);text-transform:uppercase;
+  border-top:1px solid var(--line);padding-top:12px;
+}
+/* cards, tables, chips */
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.stat{font-family:'Fraunces',serif;font-weight:700;font-size:46px;line-height:1;color:var(--teal)}
+.stat small{font-size:22px}
+.stat-l{font-size:12.5px;color:var(--ink-soft);margin-top:6px;line-height:1.45}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+   color:var(--ink-soft);text-align:left;padding:8px 12px;border-bottom:2px solid var(--ink)}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.chip{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.08em;
+  padding:3px 10px;border-radius:999px;border:1px solid var(--line);background:#fff}
+.chip.ok{color:var(--green);border-color:rgba(46,125,91,.4);background:rgba(46,125,91,.08)}
+.chip.no{color:var(--red);border-color:rgba(168,74,53,.4);background:rgba(168,74,53,.08)}
+.chip.warn{color:var(--gold);border-color:rgba(200,134,45,.5);background:rgba(200,134,45,.1)}
+.chip.next{color:var(--brand);border-color:rgba(23,107,115,.4);background:rgba(23,107,115,.08)}
+/* ---------- nav UI ---------- */
+.progress{position:fixed;left:0;top:0;height:3px;background:linear-gradient(90deg,var(--brand),var(--gold));z-index:50;transition:width .35s ease}
+.navbtns{position:fixed;right:22px;bottom:20px;display:flex;gap:8px;z-index:50}
+.navbtns button{
+  width:42px;height:42px;border-radius:50%;border:1px solid rgba(245,241,230,.3);
+  background:rgba(13,34,43,.7);color:#f5f1e6;font-size:17px;cursor:pointer;backdrop-filter:blur(4px);
+  transition:.2s;display:flex;align-items:center;justify-content:center}
+.navbtns button:hover{background:var(--brand);border-color:var(--brand)}
+.hint{position:fixed;left:22px;bottom:26px;z-index:50;color:rgba(245,241,230,.55);
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em}
+.counter{position:fixed;left:50%;transform:translateX(-50%);bottom:26px;z-index:50;color:rgba(245,241,230,.8);
+  font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.25em}
+/* overview */
+body.overview{overflow:auto}
+body.overview .deck{position:static;display:grid;grid-template-columns:repeat(4,1fr);gap:26px;padding:34px}
+body.overview .slide{position:relative;opacity:1;visibility:visible;transform:none;width:auto;height:auto;aspect-ratio:16/9;cursor:pointer;transition:.2s}
+body.overview .slide:hover{outline:3px solid var(--gold)}
+body.overview .slide .rv{opacity:1;transform:none;animation:none}
+body.overview .slide.shrunken .slide-inner{transform:scale(.278);transform-origin:0 0;width:359px;height:202px}
+body.overview .hint,body.overview .counter{display:none}
+/* print */
+@media print{
+  body{overflow:visible;background:#fff}
+  .deck{position:static;display:block}
+  .slide{position:relative;width:1280px;height:720px;opacity:1 !important;visibility:visible !important;transform:none !important;page-break-after:always;margin:0 auto;box-shadow:none}
+  .slide .rv{opacity:1 !important;transform:none !important;animation:none !important}
+  .progress,.navbtns,.hint,.counter{display:none !important}
+}
+/* ============ SLIDE 1 — COVER ============ */
+.s-cover{background:linear-gradient(150deg,#0b3140 0%,#0f4c5c 52%,#176b73 100%);color:#f5f1e6}
+.s-cover::after{background:radial-gradient(110% 80% at 85% 10%,rgba(232,196,138,.14),transparent 55%)}
+.s-cover .kicker{color:var(--gold-soft)}
+.s-cover .kicker::before{background:var(--gold)}
+.s-cover h1{font-size:88px;letter-spacing:-.01em}
+.s-cover h1 em{font-style:italic;font-weight:300;color:var(--gold-soft)}
+.s-cover .sub{color:rgba(245,241,230,.82)}
+.s-cover .coverfoot{display:flex;gap:56px;margin-top:auto;padding-top:26px;border-top:1px solid rgba(245,241,230,.25)}
+.s-cover .coverfoot .stat{color:#fff;font-size:40px}
+.s-cover .coverfoot .stat-l{color:rgba(245,241,230,.7)}
+.s-cover .ghost{
+  position:absolute;right:-40px;top:-60px;font-family:'Fraunces',serif;font-weight:900;
+  font-size:430px;line-height:1;color:rgba(245,241,230,.045);z-index:1;user-select:none}
+.s-cover .chrome-bottom{color:rgba(245,241,230,.6);border-color:rgba(245,241,230,.25)}
+/* ============ SLIDE 2 — LATAR BELAKANG ============ */
+.two-col{display:grid;grid-template-columns:1.05fr .95fr;gap:36px;flex:1;margin-top:26px;min-height:0}
+.lead-quote{font-family:'Fraunces',serif;font-size:23px;font-weight:400;line-height:1.45;font-style:italic;color:var(--teal-deep);
+  border-left:3px solid var(--gold);padding-left:18px;margin:18px 0}
+.factlist{list-style:none;display:flex;flex-direction:column;gap:13px}
+.factlist li{display:flex;gap:14px;align-items:flex-start;font-size:15px;line-height:1.5;color:var(--ink)}
+.factlist .n{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--gold);font-size:13px;min-width:26px;padding-top:2px}
+.s-bg .statgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+/* ============ FISHBONE ============ */
+.fishbone-wrap{flex:1;display:flex;align-items:center;justify-content:center;margin-top:4px}
+.fishbone-wrap svg{width:100%;max-height:520px}
+.fb-cat{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;fill:#f5f1e6;letter-spacing:.04em}
+.fb-cat-box{fill:var(--teal)}
+.fb-sub{font-size:11.5px;fill:var(--ink-soft);font-family:'IBM Plex Sans',sans-serif}
+.fb-spine{stroke:var(--teal-deep);stroke-width:3.5}
+.fb-bone{stroke:var(--teal);stroke-width:2.4}
+.fb-tick{stroke:rgba(19,42,51,.4);stroke-width:1.2}
+.fb-head{fill:#0b3140}
+.fb-head-t1{font-family:'Fraunces',serif;font-size:19px;font-weight:700;fill:#f5f1e6}
+.fb-head-t2{font-size:11.5px;fill:var(--gold-soft);font-family:'IBM Plex Mono',monospace;letter-spacing:.1em}
+/* ============ SLIDE 3 — SOLUSI & INTEGRASI ============ */
+.sol-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;flex:1;margin-top:22px;min-height:0}
+.sol-col{display:flex;flex-direction:column;gap:12px}
+.sol-item{display:flex;gap:14px;align-items:flex-start}
+.sol-item .ico{width:34px;height:34px;border-radius:9px;flex:none;display:flex;align-items:center;justify-content:center;
+  font-size:16px;background:rgba(23,107,115,.12);color:var(--teal);border:1px solid rgba(23,107,115,.25)}
+.sol-item b{display:block;font-size:14.5px}
+.sol-item p{font-size:12.8px;color:var(--ink-soft);line-height:1.45;margin-top:2px}
+.tag-ai{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:var(--gold);border:1px solid rgba(200,134,45,.45);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:2px}
+/* ============ SLIDE 4 — TIMELINE ============ */
+.tl{flex:1;margin-top:24px;display:flex;flex-direction:column;gap:0;position:relative}
+.tl-row{display:grid;grid-template-columns:190px 46px 1fr auto;gap:0 16px;align-items:center;padding:9.5px 0;border-bottom:1px dashed var(--line)}
+.tl-row:last-child{border-bottom:none}
+.tl-when{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);letter-spacing:.04em}
+.tl-dot{width:15px;height:15px;border-radius:50%;background:var(--paper);border:3px solid var(--brand);position:relative;z-index:2}
+.tl-row.done .tl-dot{background:var(--brand)}
+.tl-row.now .tl-dot{background:var(--gold);border-color:var(--gold)}
+.tl-what b{font-size:15px;display:block}
+.tl-what span{font-size:12.5px;color:var(--ink-soft)}
+.tl-line{position:absolute;left:206px;top:14px;bottom:14px;width:2px;background:linear-gradient(var(--brand) 70%,var(--gold));z-index:1}
+/* ============ SLIDE 5 & 10 — DATA ============ */
+.datagrid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;flex:1;min-height:0}
+.dcard{border-radius:14px;padding:18px 20px;border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;gap:8px}
+.dcard h3{font-family:'Fraunces',serif;font-size:19px;display:flex;align-items:center;gap:10px}
+.dcard h3 .em{font-size:20px}
+.dcard ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.dcard li{font-size:13px;color:var(--ink-soft);padding-left:16px;position:relative;line-height:1.4}
+.dcard li::before{content:"—";position:absolute;left:0;color:var(--gold)}
+.dcard.missing{background:linear-gradient(160deg,#fbf4ef,#f7ece7);border-color:rgba(168,74,53,.35)}
+.dcard.missing li::before{content:"✕";color:var(--red);font-size:10px;top:2px}
+.why{font-size:12px;color:var(--teal);font-style:italic;margin-top:auto;border-top:1px dotted var(--line);padding-top:7px}
+/* ============ SLIDE 6 — DATA TERSEDIA ============ */
+.avail-top{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px}
+.feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px;flex:1}
+.feat-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.feat-card h4{font-size:12px;font-family:'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);margin-bottom:8px;display:flex;justify-content:space-between}
+.feat-card h4 span{color:var(--gold);font-size:11px}
+.feat-card p{font-size:11.3px;line-height:1.55;color:var(--ink-soft)}
+/* ============ SLIDE 7/8 — MODELING ============ */
+.pipe{display:flex;align-items:stretch;gap:0;margin:18px 0 14px}
+.pipe-step{flex:1;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;position:relative;margin-right:26px}
+.pipe-step:last-child{margin-right:0}
+.pipe-step:not(:last-child)::after{content:"→";position:absolute;right:-22px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:15px;font-weight:700}
+.pipe-step b{font-size:12px;display:block;margin-bottom:3px}
+.pipe-step span{font-size:10.8px;color:var(--ink-soft);line-height:1.4;display:block}
+.scorebar{display:flex;align-items:center;gap:10px;font-size:12.5px}
+.scorebar .bar{flex:1;height:9px;border-radius:99px;background:rgba(19,42,51,.1);overflow:hidden}
+.scorebar .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--brand),var(--gold))}
+.warnbox{background:linear-gradient(150deg,#fdf3e7,#faecd9);border:1px solid rgba(200,134,45,.5);border-radius:12px;padding:14px 18px;font-size:13px;line-height:1.5;color:#6b4a17;display:flex;gap:12px;align-items:flex-start}
+.warnbox .em{font-size:18px}
+.vs-table td:first-child{font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft)}
+.vs-table .v1{color:var(--red)}
+.vs-table .v2{color:var(--green);font-weight:600}
+/* ============ SLIDE 9 — FLOW ============ */
+.flow{flex:1;display:grid;grid-template-columns:1fr 1.15fr 1fr;grid-template-rows:1fr 1fr;gap:22px 46px;margin-top:24px;position:relative;align-items:stretch}
+.fbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;position:relative;display:flex;flex-direction:column;gap:5px}
+.fbox h4{font-family:'Fraunces',serif;font-size:16.5px;display:flex;align-items:center;gap:9px}
+.fbox h4 .bdg{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;background:var(--teal);color:#fff;border-radius:4px;padding:2px 7px}
+.fbox p{font-size:11.6px;color:var(--ink-soft);line-height:1.5}
+.fbox.hl{background:linear-gradient(155deg,#0f4c5c,#176b73);color:#fff;border:none}
+.fbox.hl h4{color:#fff}.fbox.hl p{color:rgba(255,255,255,.8)}
+.fbox.hl .bdg{background:var(--gold);color:#0b3140}
+.fbox.out{border-color:rgba(200,134,45,.5);background:linear-gradient(150deg,#fdf6ea,#f9eeda)}
+/* ============ SLIDE 11 — BISNIS ============ */
+.biz-steps{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+.biz-step{display:grid;grid-template-columns:52px 1fr;gap:16px;align-items:start}
+.biz-step .num{width:44px;height:44px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:19px;font-weight:700}
+.biz-step b{font-size:15.5px}
+.biz-step p{font-size:13px;color:var(--ink-soft);line-height:1.5;margin-top:3px}
+.gov-note{margin-top:auto;background:rgba(23,107,115,.08);border:1px solid rgba(23,107,115,.3);border-radius:12px;padding:12px 16px;font-size:12.5px;color:var(--teal-deep)}
+/* ============ SLIDE 12 — PROTO ============ */
+.s-proto .mock{background:linear-gradient(160deg,#f0f4f3,#e7efec);border:1px solid rgba(23,107,115,.3);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.mock-bar{display:flex;gap:6px;margin-bottom:10px}
+.mock-bar i{width:9px;height:9px;border-radius:50%;background:rgba(19,42,51,.2)}
+.badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;border-radius:5px;padding:2px 8px}
+.badge.r{background:rgba(168,74,53,.15);color:var(--red)}
+.badge.s{background:rgba(200,134,45,.18);color:#8a5a13}
+.badge.t{background:rgba(46,125,91,.16);color:var(--green)}
+.mock table{font-size:11.3px}
+.mock td,.mock th{padding:5px 8px}
+.link-big{font-family:'Fraunces',serif;font-size:26px;color:var(--teal);text-decoration:none;border-bottom:2px solid var(--gold)}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<div class="deck" id="deck">
+
+<!-- ================= SLIDE 1 : COVER + LATAR BELAKANG ================= -->
+<section class="slide s-cover" id="s1">
+  <div class="ghost">🏛</div>
+  <div class="slide-inner">
+    <div class="chrome-top rv">
+      <div class="kicker">Paparan Project · Action Learning</div>
+      <div class="pageno">01 / 12</div>
+    </div>
+    <div style="margin-top:64px" class="rv d2">
+      <h1>Prediksi Ketertagihan<br><em>Wajib Pajak</em></h1>
+      <p class="sub" style="margin-top:18px;max-width:640px">
+        Model machine learning untuk men-triage portofolio piutang pajak —
+        mengklasifikasikan Wajib Pajak ke dalam kelas ketertagihan
+        <b>Rendah · Sedang · Tinggi</b> sebagai dasar prioritas penagihan.
+      </p>
+      <div class="lead-quote" style="color:var(--gold-soft);border-color:var(--gold);margin-top:26px">
+        "Piutang pajak menumpuk bukan karena tidak ada data —<br>
+        tetapi karena tidak ada alat untuk memutuskan <u>siapa ditagih lebih dulu</u>."
+      </div>
+    </div>
+    <div class="coverfoot rv d4">
+      <div><div class="stat">2.873</div><div class="stat-l">Wajib Pajak<br>berlabel hasil</div></div>
+      <div><div class="stat">195<small>rb+</small></div><div class="stat-l">baris kohir diproses<br>menjadi profil WP</div></div>
+      <div><div class="stat">3</div><div class="stat-l">kelas ketertagihan<br>(Rendah / Sedang / Tinggi)</div></div>
+      <div><div class="stat">36</div><div class="stat-l">fitur kapasitas &amp; kemauan bayar<br>(model V2 anti-leakage)</div></div>
+    </div>
+    <div class="chrome-bottom"><span>Ketertagihan WP — DSPC</span><span>Streamlit · scikit-learn · Docker</span></div>
+  </div>
+</section>
+
+<!-- ================= SLIDE 2 : FISHBONE ================= -->
+<section class="slide" id="s2">
+  <div class="slide-inner">
+    <div class="chrome-top rv">
+      <div class="kicker">Analisis Masalah</div>
+      <div class="pageno">02 / 12</div>
+    </div>
+    <h2 class="rv d1">Diagram Fishbone — Akar Masalah</h2>
+    <p class="sub rv d1">Mengapa tunggakan pajak sulit tertagih? Enam kategori penyebab yang memotret kondisi proses penagihan saat ini.</p>
+    <div class="fishbone-wrap rv d2">
+      <svg viewBox="0 0 1240 560" aria-label="Diagram fishbone">
+        <!-- spine -->
+        <line class="fb-spine" x1="50" y1="280" x2="905" y2="280"/>
+        <!-- head -->
+        <rect class="fb-head" x="905" y="222" width="300" height="116" rx="14"/>
+        <text class="fb-head-t1" x="925" y="266">Tunggakan pajak</text>
+        <text class="fb-head-t1" x="925" y="292">sulit tertagih</text>
+        <text class="fb-head-t2" x="925" y="318">PIUTANG TUA MENUMPUK</text>
+        <!-- TOP bones (attach x, tip = attach-150,70) -->
+        <!-- B1: attach 430 -->
+        <line class="fb-bone" x1="430" y1="280" x2="280" y2="80"/>
+        <rect class="fb-cat-box" x="150" y="46" width="182" height="32" rx="7"/>
+        <text class="fb-cat" x="163" y="67">SDM &amp; ORGANISASI</text>
+        <line class="fb-tick" x1="392" y1="230" x2="372" y2="230"/><text class="fb-sub" x="366" y="234" text-anchor="end">SDM penagih terbatas</text>
+        <line class="fb-tick" x1="355" y1="180" x2="335" y2="180"/><text class="fb-sub" x="329" y="184" text-anchor="end">Prioritas masih manual</text>
+        <line class="fb-tick" x1="317" y1="130" x2="297" y2="130"/><text class="fb-sub" x="291" y="134" text-anchor="end">Skill analitik belum merata</text>
+        <!-- B2: attach 690 -->
+        <line class="fb-bone" x1="690" y1="280" x2="540" y2="80"/>
+        <rect class="fb-cat-box" x="410" y="46" width="192" height="32" rx="7"/>
+        <text class="fb-cat" x="423" y="67">PROSES BISNIS</text>
+        <line class="fb-tick" x1="652" y1="230" x2="632" y2="230"/><text class="fb-sub" x="626" y="234" text-anchor="end">Validasi DSPC manual</text>
+        <line class="fb-tick" x1="615" y1="180" x2="595" y2="180"/><text class="fb-sub" x="589" y="184" text-anchor="end">Tanpa triase berbasis risiko</text>
+        <line class="fb-tick" x1="577" y1="130" x2="557" y2="130"/><text class="fb-sub" x="551" y="134" text-anchor="end">Monitoring daluwarsa reaktif</text>
+        <!-- B3: attach 950 -->
+        <line class="fb-bone" x1="950" y1="280" x2="800" y2="80"/>
+        <rect class="fb-cat-box" x="670" y="46" width="200" height="32" rx="7"/>
+        <text class="fb-cat" x="683" y="67">DATA &amp; SUMBER</text>
+        <line class="fb-tick" x1="912" y1="230" x2="892" y2="230"/><text class="fb-sub" x="886" y="234" text-anchor="end">Data tersebar multi-sistem</text>
+        <line class="fb-tick" x1="875" y1="180" x2="855" y2="180"/><text class="fb-sub" x="849" y="184" text-anchor="end">Tidak terintegrasi &amp; missing</text>
+        <line class="fb-tick" x1="837" y1="130" x2="817" y2="130"/><text class="fb-sub" x="811" y="134" text-anchor="end">Data harta/penghasilan nihil</text>
+        <!-- BOTTOM bones -->
+        <!-- B4: attach 430 -->
+        <line class="fb-bone" x1="430" y1="280" x2="280" y2="480"/>
+        <rect class="fb-cat-box" x="140" y="492" width="202" height="32" rx="7"/>
+        <text class="fb-cat" x="153" y="513">METODE &amp; ANALITIK</text>
+        <line class="fb-tick" x1="392" y1="330" x2="372" y2="330"/><text class="fb-sub" x="366" y="334" text-anchor="end">Kolektibilitas dinilai subjektif</text>
+        <line class="fb-tick" x1="355" y1="380" x2="335" y2="380"/><text class="fb-sub" x="329" y="384" text-anchor="end">Belum ada model prediktif</text>
+        <line class="fb-tick" x1="317" y1="430" x2="297" y2="430"/><text class="fb-sub" x="291" y="434" text-anchor="end">Outcome dicampur prediktor</text>
+        <!-- B5: attach 690 -->
+        <line class="fb-bone" x1="690" y1="280" x2="540" y2="480"/>
+        <rect class="fb-cat-box" x="400" y="492" width="186" height="32" rx="7"/>
+        <text class="fb-cat" x="413" y="513">KEBIJAKAN</text>
+        <line class="fb-tick" x1="652" y1="330" x2="632" y2="330"/><text class="fb-sub" x="626" y="334" text-anchor="end">Sengketa memperlambat tagih</text>
+        <line class="fb-tick" x1="615" y1="380" x2="595" y2="380"/><text class="fb-sub" x="589" y="384" text-anchor="end">Daluwarsa membatasi umur utang</text>
+        <line class="fb-tick" x1="577" y1="430" x2="557" y2="430"/><text class="fb-sub" x="551" y="434" text-anchor="end">Ketentuan penagihan berjenjang</text>
+        <!-- B6: attach 950 -->
+        <line class="fb-bone" x1="950" y1="280" x2="800" y2="480"/>
+        <rect class="fb-cat-box" x="660" y="492" width="202" height="32" rx="7"/>
+        <text class="fb-cat" x="673" y="513">TEKNOLOGI</text>
+        <line class="fb-tick" x1="912" y1="330" x2="892" y2="330"/><text class="fb-sub" x="886" y="334" text-anchor="end">Belum ada aplikasi internal</text>
+        <line class="fb-tick" x1="875" y1="380" x2="855" y2="380"/><text class="fb-sub" x="849" y="384" text-anchor="end">Akses data tidak real-time</text>
+        <line class="fb-tick" x1="837" y1="430" x2="817" y2="430"/><text class="fb-sub" x="811" y="434" text-anchor="end">Analisis ad-hoc di spreadsheet</text>
+      </svg>
+    </div>
+    <div class="chrome-bottom"><span>Ketertagihan WP — DSPC</span><span>Ishikawa · 6 kategori penyebab</span></div>
+  </div>
+</section>
+
+<!-- ================= SLIDE 3 : PENGEMBANGAN & INTEGRASI ================= -->
+<section class="slide" id="s3">
+  <div class="slide-inner">
+    <div class="chrome-top rv">
+      <div class="kicker">Pengembangan &amp; Integrasi</div>
+      <div class="pageno">03 / 12</div>
+    </div>
+    <h2 class="rv d1">Dari Akar Masalah → Respons Kita</h2>
+    <p class="sub rv d1">Setiap solusi menjawab kategori fishbone di slide sebelumnya — ditambah peta integrasi AI lanjutan.</p>
+    <div class="sol-grid">
+      <div class="sol-col rv d2">
+        <div class="card" style="flex:1">
+          <div class="kicker" style="margin-bottom:12px">Yang sudah dibangun</div>
+          <div style="display:flex;flex-direction:column;gap:13px">
+            <div class="sol-item"><div class="ico">🎯</div><div><b>Model triase ketertagihan (V2)</b><p>Menjawab <i>Metode &amp; Analitik</i>: 36 fitur kapasitas &amp; kemauan bayar → kelas Rendah/Sedang/Tinggi per WP.</p></div></div>
+            <div class="sol-item"><div class="ico">🔗</div><div><b>Pipeline data terintegrasi</b><p>Menjawab <i>Data &amp; Sumber</i>: kohir, SPT/omzet, dan faktur digabung otomatis menjadi satu profil WP.</p></div></div>
+            <div class="sol-item"><div class="ico">🖥️</div><div><b>Aplikasi Streamlit internal</b><p>Menjawab <i>Teknologi</i>: upload → prediksi → rekomendasi triase + unduh CSV, NPWP &amp; nama otomatis dimask.</p></div></div>
+            <div class="sol-item"><div class="ico">🧭</div><div><b>Triase berbasis risiko</b><p>Menjawab <i>Proses Bisnis &amp; SDM</i>: petugas fokus pada WP bernilai besar &amp; berisiko, bukan urutan daftar.</p></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="sol-col rv d3">
+        <div class="card" style="flex:1;background:linear-gradient(160deg,#0f4c5c,#176b73);border:none;color:#fff">
+          <div class="kicker" style="color:var(--gold-soft);margin-bottom:12px">Integrasi AI lanjutan — usulan</div>
+          <div style="display:flex;flex-direction:column;gap:13px">
+            <div class="sol-item"><div class="ico" style="background:rgba(232,196,138,.15);color:var(--gold-soft);border-color:rgba(232,196,138,.3)">⚖️</div><div><b style="color:#fff">Crisscross &amp; anomali faktur<span class="tag-ai">AI</span></b><p style="color:rgba(255,255,255,.75)">Deteksi transaksi fiktif: SPT vs faktur pajak vs omzet tidak konsisten.</p></div></div>
+            <div class="sol-item"><div class="ico" style="background:rgba(232,196,138,.15);color:var(--gold-soft);border-color:rgba(232,196,138,.3)">🔮</div><div><b style="color:#fff">Forecast piutang &amp; daluwarsa<span class="tag-ai">AI</span></b><p style="color:rgba(255,255,255,.75)">Proyeksi piutang tertagih &amp; peringatan dini utang mendekati daluwarsa.</p></div></div>
+            <div class="sol-item"><div class="ico" style="background:rgba(232,196,138,.15);color:var(--gold-soft);border-color:rgba(232,196,138,.3)">📄</div><div><b style="color:#fff">OCR dokumen penagihan<span class="tag-ai">AI</span></b><p style="color:rgba(255,255,255,.75)">Ekstraksi otomatis data dari surat teguran/paksa/BAPS hasil unggahan.</p></div></div>
+            <div class="sol-item"><div class="ico" style="background:rgba(232,196,138,.15);color:var(--gold-soft);border-color:rgba(232,196,138,.3)">🤖</div><div><b style="color:#fff">Asisten LLM penagih<span class="tag-ai">AI</span></b><p style="color:rgba(255,255,255,.75)">Ringkasan profil WP &amp; saran langkah penagihan (draft surat) dari data kohir.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-bottom"><span>Ketertagihan WP — DSPC</span><span>Solusi ↔ fishbone</span></div>
+  </div>
+</section>
+
+<!-- ================= SLIDE 4 : TIMELINE ================= -->
+<section class="slide" id="s4">
+  <div class="slide-inner">
+    <div class="chrome-top rv">
+      <div class="kicker">Timeline Penyelesaian</div>
+      <div class="pageno">04 / 12</div>
+    </div>
+    <h2 class="rv d1">Jadwal Action Learning</h2>
+    <p class="sub rv d1">Delapan fase siklus action learning — penjadwalan mengikuti ritme kelompok (dapat digeser sesuai kesepakatan tim).</p>
+    <div class="tl rv d2">
+      <div class="tl-line"></div>
+      <div class="tl-row done"><div class="tl-when">Tahap 1</div><div class="tl-dot"></div><div class="tl-what"><b>Discovery &amp; framing masalah</b><span>Fishbone, definisi LABEL (Rendah/Sedang/Tinggi), kesepakatan skenario triase</span></div><span class="chip ok">SELESAI</span></div>
+      <div class="tl-row done"><div class="tl-when">Tahap 2</div><div class="tl-dot"></div><div class="tl-what"><b>Pengumpulan &amp; permintaan data</b><span>Daftar kebutuhan Excel, koordinasi sumber data, iterasi tarikan</span></div><span class="chip ok">SELESAI</span></div>
+      <div class="tl-row done"><div class="tl-when">Tahap 3</div><div class="tl-dot"></div><div class="tl-what"><b>Pre-processing &amp; EDA <span class="mono" style="font-size:10px">(ipynb 01)</span></b><span>Bersih-bersih, validasi LABEL, agregasi 3.003 kohir → 2.873 WP</span></div><span class="chip ok">SELESAI</span></div>
+      <div class="tl-row done"><div class="tl-when">Tahap 4</div><div class="tl-dot"></div><div class="tl-what"><b>Model V1 <span class="mono" style="font-size:10px">(ipynb 02)</span></b><span>Benchmark 4 model, tuning HistGB, F1-macro 0,991 — lalu ditemukan leakage</span></div><span class="chip ok">SELESAI</span></div>
+      <div class="tl-row done"><div class="tl-when">Tahap 5</div><div class="tl-dot"></div><div class="tl-what"><b>Audit leakage &amp; redesain target</b><span>Kontrak anti-leakage: kolom pembentuk LABEL dilarang masuk prediktor</span></div><span class="chip ok">SELESAI</span></div>
+      <div class="tl-row done"><div class="tl-when">Tahap 6</div><div class="tl-dot"></div><div class="tl-what"><b>Model V2 <span class="mono" style="font-size:10px">(ipynb 03)</span></b><span>Agregasi 195rb+ kohir → 36 fitur kapasitas, LogReg, F1-macro 0,562 (jujur)</span></div><span class="chip ok">SELESAI</span></div>
+      <div class="tl-row done"><div class="tl-when">Tahap 7</div><div class="tl-dot"></div><div class="tl-what"><b>Aplikasi &amp; deployment</b><span>Streamlit + Docker + reverse proxy TLS, masking NPWP/nama, unit test</span></div><span class="chip ok">SELESAI</span></div>
+      <div class="tl-row now"><div class="tl-when">Tahap 8</div><div class="tl-dot"></div><div class="tl-what"><b>Data tambahan, monitoring &amp; paparan</b><span>Usulan data harta/penghasilan/histori setor, validasi prospektif, uji coba pengguna</span></div><span class="chip warn">BERJALAN</span></div>
+    </div>
+    <div class="chrome-bottom"><span>Ketertagihan WP — DSPC</span><span>Action Learning Cycle</span></div>
+  </div>
+</section>
+
+<!-- ================= SLIDE 5 : KEBUTUHAN DATA ================= -->
+<section class="slide" id="s5">
+  <div class="slide-inner">
+    <div class="chrome-top rv">
+      <div class="kicker">Kebutuhan Data</div>
+      <div class="pageno">05 / 12</div>
+    </div>
+    <h2 class="rv d1">Daftar Permintaan Data (Excel)</h2>
+    <p class="sub rv d1">Kebutuhan data lengkap yang diajukan saat kick-off — kini sebagian besar sudah diterima; empat kelompok data kunci <b>belum tersedia</b>.</p>
+    <div class="datagrid rv d2">
+      <div class="dcard">
+        <h3><span class="em">📥</span> Data yang diminta &amp; <span style="color:var(--green)">diterima</span></h3>
+        <ul>
+          <li><b>Kohir / daftar tunggakan</b> per ketetapan — pokok, sisa, tanggal utang, daluwarsa (±3.000 baris berlabel; ±195rb baris untuk profil)</li>
+          <li><b>Metrik SPT &amp; omzet</b> — rasio lapor SPT 3 tahun, peredaran bruto (2.873 WP, coverage 100%)</li>
+          <li><b>Faktur pajak customer</b> tahun 2024 — jumlah mitra, DPP, jumlah faktur</li>
+          <li><b>Faktur pajak supplier</b> tahun 2024 — kebalikannya, untuk jejaring transaksi</li>
+          <li><b>Profil WP</b> — status (AKTIF/NE/DE), jenis WP, KPP, kanwil, sektor KLU</li>
+          <li><b>Riwayat tindakan penagihan</b> — teguran, SP, sita (untuk validasi LABEL, bukan prediktor)</li>
+        </ul>
+        <div class="why">Semua file diterima dalam format Excel/CSV → diproses otomatis oleh pipeline.</div>
+      </div>
+      <div class="dcard missing">
+        <h3><span class="em">🚫</span> Data kunci yang <span style="color:var(--red)">belum tersedia</span></h3>
+        <ul>
+          <li><b>Data harta / kekayaan WP</b> — rekening bank, kendaraan, properti, piutang, aset teridentifikasi</li>
+          <li><b>Data penanggung pajak</b> — penanggung jawab pembayaran (bendahara/penanggung pajak badan)</li>
+          <li><b>Data penghasilan</b> — SPT PPh tahunan detail, bukti potong, penghasilan lain</li>
+          <li><b>Histori pembayaran pajak</b> — rekam setoran per periode (KHS), perilaku bayar historis</li>
+        </ul>
+        <div class="why" style="color:var(--red)">Tanpa empat data ini, model hanya membaca <b>kapasitas proksi</b> (omzet, tunggakan, jejaring) — belum kapasitas &amp; kemauan bayar sesungguhnya.</div>
+      </div>
+    </div>
+    <div class="chrome-bottom"><span>Ketertagihan WP — DSPC</span><span>Data inventory</span></div>
+  </div>
+</section>
+
+<!-- ================= SLIDE 6 : DATA TERSEDIA ================= -->
+<section class="slide" id="s6">
+  <div class="slide-inner">
+    <div class="chrome-top rv">
+      <div class="kicker">Data yang Tersedia Saat Ini</div>
+      <div class="pageno">06 / 12</div>
+    </div>
+    <h2 class="rv d1">Apa yang Kita Pegang Sekarang</h2>
+    <div class="avail-top rv d2">
+      <div class="card"><div class="stat">3.003</div><div class="stat-l">baris kohir V1 → 3.000 setelah dedup → <b>2.873 WP unik</b> (117 WP punya &gt;1 ketetapan)</div></div>
+      <div class="card"><div class="stat">195<small>rb+</small></div><div class="stat-l">baris kohir V2 (berlabel + konteks) membentuk profil portofolio WP</div></div>
+      <div class="card"><div class="stat">1.004</div><div class="stat-l">ketetapan outstanding (sisa &gt; 0) vs 1.996 lunas · snapshot <b>13 Jun 2026</b></div></div>
+      <div class="card"><div class="stat">983/939/951</div><div class="stat-l">distribusi LABEL WP (Rendah / Sedang / Tinggi) — relatif seimbang</div></div>
+    </div>
+    <div class="feat-grid rv d3">
+      <div class="feat-card"><h4>Profil tunggakan <span>13 fitur</span></h4><p>Total/rata/median/maks tunggakan (+log), jumlah ketetapan, jenis pajak &amp; ketetapan, umur utang rata &amp; tertua, sisa daluwarsa terdekat, selisih tahun terbit.</p></div>
+      <div class="feat-card"><h4>SPT &amp; omzet <span>7 fitur</span></h4><p>Rasio lapor SPT 3 tahun, flag lapor terakhir, flag tanpa data SPT, peredaran bruto (+log), flag omzet nol/kosong, rasio tunggakan ÷ omzet.</p></div>
+      <div class="feat-card"><h4>Faktur &amp; mitra <span>9 fitur</span></h4><p>Customer &amp; supplier 2024: jumlah mitra, DPP (+log), jumlah faktur, total mitra gabungan — proksi aktivitas ekonomi riil.</p></div>
+      <div class="feat-card"><h4>Kategorikal <span>7 fitur</span></h4><p>Status WP (AKTIF 2.807 / NE 174 / DE 18), jenis WP, jenis KPP (PRATAMA 2.409 / MADYA 459 / KHUSUS 112 / BESAR 20), kanwil, sektor KLU (KONSTRUKSI dominan 1.544), pajak &amp; ketetapan dominan.</p></div>
+    </div>
+    <p class="sub rv d4" style="margin-top:14px;font-size:13.5px">Total <b class="mono">36 fitur</b> (29 numerik + 7 kategorikal) — kontrak model V2. Kolom pembayaran &amp; tindakan penagihan (SETOR_*, NILAI_SISA, LABEL) <b>dilarang</b> masuk prediktor.</p>
+    <div class="chrome-bottom"><span>Ketertagihan WP — DSPC</span><span>Snapshot 13-06-2026</span></div>
+  </div>
+</section>
+
+<!-- ================= SLIDE 7 : MODELING V1 ================= -->
+<section class="slide" id="s7">
+  <div class="slide-inner">
+    <div class="chrome-top rv">
+      <div class="kicker">Teknik Analisis &amp; Modeling · Versi 1</div>
+      <div class="pageno">07 / 12</div>
+    </div>
+    <h2 class="rv d1">Model V1 — Notebook 02 <span class="mono" style="font-size:20px;color:var(--ink-soft)">kolektibilitas</span></h2>
+    <div class="pipe rv d2">
+      <div class="pipe-step"><b>1 · Muat</b><span>wp_features.csv — 2.873 WP × 62 kolom hasil notebook 01</span></div>
+      <div class="pipe-step"><b>2 · Fitur</b><span>52 fitur (47 numerik + 5 kategorikal) — termasuk kolom pembayaran</span></div>
+      <div class="pipe-step"><b>3 · Split</b><span>Stratified 80/20 → train 2.298 / test 575 · random_state 42</span></div>
+      <div class="pipe-step"><b>4 · CV 5-fold</b><span>Dummy · LogReg · RandomForest · HistGB — metrik F1-macro</span></div>
+      <div class="pipe-step"><b>5 · Tuning</b><span>RandomizedSearch pada pemenang (HistGB)</span></div>
+      <div class="pipe-step"><b>6 · Evaluasi</b><span>Test set + segmen (AKTIF/NE-DE, outstanding/lunas) + importance</span></div>
+    </div>
+    <div class="two-col" style="margin-top:6px">
+      <div class="card rv d3">
+        <div class="kicker" style="margin-bottom:12px">Hasil CV (F1-macro)</div>
+        <div style="display:flex;flex-direction:column;gap:9px;font-size:12.5px">
+          <div class="scorebar"><span class="mono" style="width:96px">HistGB</span><div class="bar"><i style="width:99%"></i></div><b class="mono">0,993</b></div>
+          <div class="scorebar"><span class="mono" style="width:96px">RandomForest</span><div class="bar"><i style="width:99%;opacity:.75"></i></div><b class="mono">0,988</b></div>
+          <div class="scorebar"><span class="mono" style="width:96px">LogReg</span><div class="bar"><i style="width:96%;opacity:.55"></i></div><b class="mono">0,964</b></div>
+          <div class="scorebar"><span class="mono" style="width:96px">Dummy</span><div class="bar"><i style="width:17%;opacity:.35"></i></div><b class="mono">0,170</b></div>
+        </div>
+        <p style="font-size:12.3px;color:var(--ink-soft);margin-top:12px">Tuning HistGB (lr 0,2 · 400 iter · 15 leaf) → CV 0,994 · <b>Test F1-macro 0,991</b>, recall Rendah 97,5%.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="warnbox rv d4"><span class="em">⚠️</span><div><b>Temuan kritis — data leakage.</b> Fitur terpenting justru <span class="mono">SETOR_TEGURAN (37%)</span>, <span class="mono">FLAG_RESPON_PENAGIHAN (8%)</span>, <span class="mono">SETOR_PAKSA (4%)</span> — kolom yang <i>membentuk</i> LABEL itu sendiri.</div></div>
+        <div class="card rv d5" style="flex:1">
+          <p style="font-size:13.5px;line-height:1.6"><b>Makna hasil 0,99:</b> model berhasil mempelajari kembali <i>aturan penetapan</i> kolektibilitas (teguran → paksa → sita), bukan memprediksi ketertagihan. Berguna sebagai <b>otomatisasi penilaian yang konsisten</b> — namun tidak jujur sebagai prediksi masa depan. Inilah pemicu lahirnya V2.</p>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-bottom"><span>Ketertagihan WP — DSPC</span><span>ipynb 02_modelling</span></div>
+  </div>
+</section>
+
+<!-- ================= SLIDE 8 : MODELING V2 ================= -->
+<section class="slide" id="s8">
+  <div class="slide-inner">
+    <div class="chrome-top rv">
+      <div class="kicker">Teknik Analisis &amp; Modeling · Lanjutan</div>
+      <div class="pageno">08 / 12</div>
+    </div>
+    <h2 class="rv d1">Model V2 — Notebook 03 <span class="mono" style="font-size:20px;color:var(--ink-soft)">ketertagihan</span></h2>
+    <p class="sub rv d1">Redesain total: hanya sinyal <b>kapasitas &amp; kemauan bayar yang independen dari outcome</b> yang boleh dipakai.</p>
+    <div class="two-col" style="grid-template-columns:1.15fr .85fr;margin-top:18px">
+      <div class="card rv d2" style="padding:8px 22px 14px">
+        <table class="vs-table">
+          <tr><th></th><th>V1 — kolektibilitas</th><th>V2 — ketertagihan</th></tr>
+          <tr><td>Sasaran</td><td>Replikasi aturan LABEL</td><td class="v2">Prediksi asli sebelum outcome</td></tr>
+          <tr><td>Data</td><td>3.003 kohir berlabel</td><td class="v2">195rb+ kohir (label NULL ikut memperkaya profil)</td></tr>
+          <tr><td>Fitur</td><td>52 — termasuk SETOR_*, sisa, respons</td><td class="v2">36 — profil, tunggakan, SPT/omzet, faktur, kronologi</td></tr>
+          <tr><td>Anti-leakage</td><td class="v1">Tidak ada — outcome bocor</td><td class="v2">Kontrak OUTCOME_COLS dilarang masuk model</td></tr>
+          <tr><td>Model</td><td>HistGradientBoosting</td><td class="v2">LogisticRegression (C=0,1, balanced)</td></tr>
+          <tr><td>F1-macro test</td><td class="v1">0,991 (terlalu bagus)</td><td class="v2">0,562 (baseline jujur)</td></tr>
+        </table>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card rv d3" style="text-align:center;padding:24px">
+          <div class="kicker" style="justify-content:center">F1-macro V2 · test</div>
+          <div class="stat" style="font-size:88px;margin:10px 0 2px">0,562</div>
+          <p style="font-size:12.5px;color:var(--ink-soft)">vs Dummy 0,17 — model memberi sinyal nyata,<br>tapi jauh dari sempurna. <b>Dan itu wajar.</b></p>
+        </div>
+        <div class="card rv d4" style="flex:1">
+          <p style="font-size:13px;line-height:1.6"><b>Kenapa turun drastis?</b> Karena yang diukur berbeda: V2 tidak lagi "mencontek kunci jawaban". Performa 0,562 adalah <b>estimasi prediktif yang jujur</b> — patokan nyata untuk ditingkatkan seiring masuknya data harta, penghasilan, dan histori setoran.</p>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-bottom"><span>Ketertagihan WP — DSPC</span><span>ipynb 03_ketertagihan_v2</span></div>
+  </div>
+</section>
+
+<!-- ================= SLIDE 9 : FLOW DATA ================= -->
+<section class="slide" id="s9">
+  <div class="slide-inner">
+    <div class="chrome-top rv">
+      <div class="kicker">Diagram Alur Data</div>
+      <div class="pageno">09 / 12</div>
+    </div>
+    <h2 class="rv d1">Dari Kohir Mentah → Keputusan Penagihan</h2>
+    <div class="flow rv d2">
+      <div class="fbox"><h4><span class="bdg">MENTAH</span> Kohir ±195rb baris</h4><p>Seluruh ketetapan WP — berlabel &amp; belum berlabel: pokok, sisa, tanggal utang, daluwarsa, jenis pajak.</p></div>
+      <div class="fbox"><h4><span class="bdg">PROSES</span> Normalisasi &amp; validasi</h4><p>Dedup, parsing tanggal/angka, NPWP 16 digit, validasi rumus LABEL (SETOR_* hanya untuk validasi — dilarang sebagai prediktor).</p></div>
+      <div class="fbox"><h4><span class="bdg">PROFIL</span> Agregasi per WP</h4><p>Total/median/maks tunggakan, jumlah &amp; ragam kohir, umur utang sejak produk hukum, sisa daluwarsa, jenis pajak dominan.</p></div>
+      <div class="fbox"><h4><span class="bdg">GABUNG</span> SPT/omzet + faktur</h4><p>Rasio lapor SPT, peredaran bruto, jejaring customer/supplier 2024 → flag missing SPT eksplisit sebelum imputasi.</p></div>
+      <div class="fbox hl"><h4><span class="bdg">MODEL</span> 36 fitur → LogReg V2</h4><p>Imputasi + scaling (numerik), one-hot (kategorikal), fit di train saja. Output: kelas + probabilitas Rendah/Sedang/Tinggi per WP.</p></div>
+      <div class="fbox out"><h4><span class="bdg" style="background:var(--gold);color:#0b3140">TERAPKAN</span> Triase &amp; aksi</h4><p>Ranking P_Rendah → aksi intensif · P_Tinggi → quick win. Unduh CSV (NPWP &amp; nama dimask), masuk validasi DSPC &amp; monitoring daluwarsa.</p></div>
+    </div>
+    <div class="chrome-bottom"><span>Ketertagihan WP — DSPC</span><span>Pipeline end-to-end</span></div>
+  </div>
+</section>
+
+<!-- ================= SLIDE 10 : KEBUTUHAN DATA TAMBAHAN ================= -->
+<section class="slide" id="s10">
+  <div class="slide-inner">
+    <div class="chrome-top rv">
+      <div class="kicker">Kebutuhan Data Tambahan</div>
+      <div class="pageno">10 / 12</div>
+    </div>
+    <h2 class="rv d1">Empat Data yang Akan Mengubah Permainan</h2>
+    <p class="sub rv d1">Prioritas dari roadmap notebook V2 — masing-masing menutup satu blind spot model.</p>
+    <div class="datagrid rv d2" style="grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr">
+      <div class="dcard missing" style="background:var(--card)">
+        <h3><span class="em">🏦</span> Harta / Aset WP <span class="chip no">prioritas #1</span></h3>
+        <ul><li>Rekening bank &amp; saldo · kendaraan · properti · piutang · aset teridentifikasi lain</li></ul>
+        <div class="why">Menjawab <b>kapasitas bayar riil</b> — model saat ini hanya melihat omzet, tidak tahu WP punya aset yang bisa disita atau dilelang.</div>
+      </div>
+      <div class="dcard" style="background:var(--card)">
+        <h3><span class="em">🧑‍💼</span> Penanggung Pajak</h3>
+        <ul><li>Penanggung jawab pembayaran: bendahara, penanggung pajak badan, pewaris</li></ul>
+        <div class="why">Menjawab <b>kepada siapa menagih</b> — utang badan vs penanggungnya sering berbeda nasib penagihan.</div>
+      </div>
+      <div class="dcard" style="background:var(--card)">
+        <h3><span class="em">💰</span> Penghasilan</h3>
+        <ul><li>SPT PPh tahunan detail, bukti potong, penghasilan lain sah</li></ul>
+        <div class="why">Menjawab <b>arus kas &amp; kepatuhan</b> — penghasilan stabil tapi tidak melapor = sinyal kemauan bayar rendah.</div>
+      </div>
+      <div class="dcard" style="background:var(--card)">
+        <h3><span class="em">🧾</span> Histori Setoran</h3>
+        <ul><li>Rekam setoran per periode (KHS), pola bayar kapan &amp; berapa</li></ul>
+        <div class="why">Menjawab <b>perilaku bayar historis</b> — fitur perilaku terkuat untuk prediksi, selama dipakai <i>sebelum</i> outcome (bukan sesudah, anti-leakage).</div>
+      </div>
+    </div>
+    <p class="sub rv d3" style="margin-top:14px;font-size:13px">Pelengkap: status sengketa (keberatan/banding aktif), reachability alamat/kontak, dan kondisi hukum (pailit/bubar/meninggal).</p>
+    <div class="chrome-bottom"><span>Ketertagihan WP — DSPC</span><span>Roadmap data</span></div>
+  </div>
+</section>
+
+<!-- ================= SLIDE 11 : INTEGRASI PROSES BISNIS ================= -->
+<section class="slide" id="s11">
+  <div class="slide-inner">
+    <div class="chrome-top rv">
+      <div class="kicker">Integrasi Proses Bisnis</div>
+      <div class="pageno">11 / 12</div>
+    </div>
+    <h2 class="rv d1">Di Mana Model Masuk ke Proses Penagihan</h2>
+    <div class="two-col" style="grid-template-columns:1.2fr .8fr">
+      <div class="biz-steps rv d2">
+        <div class="biz-step"><div class="num">1</div><div><b>Validasi DSPC</b><p>Skor ketertagihan menjadi <b>masukan pertimbangan</b> saat memvalidasi daftar/kolektibilitas WP — bukan pengganti keputusan. Petugas tetap pemeriksa akhir (human-in-the-loop).</p></div></div>
+        <div class="biz-step"><div class="num">2</div><div><b>Triase portofolio berkala</b><p>Setiap tarikan snapshot baru: ranking otomatis — <span class="badge t">Tinggi</span> quick win ditagih dulu, <span class="badge r">Rendah</span> masuk jalur intensif (pemeriksaan, sita, penagihan dengan PPnS).</p></div></div>
+        <div class="biz-step"><div class="num">3</div><div><b>Monitoring daluwarsa</b><p>Fitur umur utang &amp; sisa daluwarsa memprioritaskan utang yang mendekati hangus — 1.104 ketetapan ber-sisa daluwarsa ≤ 2 tahun saat snapshot.</p></div></div>
+        <div class="biz-step"><div class="num">4</div><div><b>Ukuran dampak &amp; iterasi</b><p>Realisasi penagihan per kelas prediksi dibandingkan tiap siklus → umpan balik untuk retraining &amp; kalibrasi probabilitas.</p></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card rv d3">
+          <div class="kicker" style="margin-bottom:10px">Prinsip penggunaan</div>
+          <ul class="factlist" style="gap:9px">
+            <li><span class="n">✓</span>Hasil = <b>pertimbangan pendukung</b>, wajib digabung informasi lapangan &amp; judgment petugas</li>
+            <li><span class="n">✓</span>Probabilitas belum dikalibrasi — untuk <b>ranking</b>, bukan peluang absolut</li>
+            <li><span class="n">✓</span>Baseline cross-sectional — validasi prospektif/out-of-time menyusul</li>
+          </ul>
+        </div>
+        <div class="gov-note rv d4">
+          <b>Tata kelola data:</b> aplikasi lokal/internal (127.0.0.1 / proxy TLS internal), NPWP &amp; nama dimask default, unduhan identitas penuh hanya untuk pengguna berwenang, upload tidak disimpan aplikasi, audit akses via reverse proxy.
+        </div>
+      </div>
+    </div>
+    <div class="chrome-bottom"><span>Ketertagihan WP — DSPC</span><span>Validasi DSPC &amp; triase</span></div>
+  </div>
+</section>
+
+<!-- ================= SLIDE 12 : PROTOTYPE ================= -->
+<section class="slide s-proto" id="s12">
+  <div class="slide-inner">
+    <div class="chrome-top rv">
+      <div class="kicker">Prototype</div>
+      <div class="pageno">12 / 12</div>
+    </div>
+    <h2 class="rv d1">Aplikasi Siap Dipakai <span style="color:var(--gold)">·</span> Demo</h2>
+    <div class="two-col" style="grid-template-columns:1.1fr .9fr">
+      <div class="mock rv d2">
+        <div class="mock-bar"><i></i><i></i><i></i></div>
+        <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--teal-deep);margin-bottom:2px">🏛️ Prediksi Ketertagihan WP</div>
+        <div class="mono" style="font-size:10px;color:var(--ink-soft);margin-bottom:10px">Model V2 siap · Logistic Regression · 36 fitur · 3 kelas</div>
+        <table>
+          <tr><th style="border-color:var(--teal)">NPWP16</th><th style="border-color:var(--teal)">NAMA_WP</th><th style="border-color:var(--teal)">KELAS</th><th style="border-color:var(--teal)">P RENDAH</th><th style="border-color:var(--teal)">REKOMENDASI</th></tr>
+          <tr><td class="mono">0001••••••••5000</td><td>D•••• P•••••••••</td><td><span class="badge r">Rendah</span></td><td class="mono">81%</td><td>aksi intensif</td></tr>
+          <tr><td class="mono">0010••••••••1000</td><td>S•••• H•••• S•••</td><td><span class="badge s">Sedang</span></td><td class="mono">12%</td><td>konfirmasi &amp; jadwal</td></tr>
+          <tr><td class="mono">0905••••••••0000</td><td>P• A•• W••••</td><td><span class="badge t">Tinggi</span></td><td class="mono">2%</td><td>quick win</td></tr>
+        </table>
+        <div class="mono" style="font-size:9.5px;color:var(--ink-soft);margin-top:10px">NPWP &amp; nama dimask di layar dan CSV · unduhan bebas formula injection</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="rv d3">
+          <div class="kicker" style="margin-bottom:8px">Akses</div>
+          <a class="link-big" href="https://localhost/" target="_blank">https://localhost/ ↗</a>
+          <p style="font-size:12px;color:var(--ink-soft);margin-top:6px">Deploy Docker + reverse proxy TLS di server internal <span class="mono">168.110.210.161</span> (siap dipindah ke domain internal instansi).</p>
+        </div>
+        <div class="card rv d4" style="flex:1">
+          <div class="kicker" style="margin-bottom:10px">Tiga jalur input</div>
+          <ul class="factlist" style="gap:8px">
+            <li><span class="n">1</span><b>Kohir mentah</b> — upload CSV/Excel/JSON, aplikasi mengagregasi otomatis per WP</li>
+            <li><span class="n">2</span><b>Fitur siap model</b> — 36 kolom, template unduh dari aplikasi</li>
+            <li><span class="n">3</span><b>Manual</b> — form satu WP, rasio &amp; flag dihitung otomatis</li>
+          </ul>
+          <div class="mono" style="font-size:10.5px;color:var(--ink-soft);margin-top:12px">Output: kelas · probabilitas · confidence · rekomendasi triase · CSV</div>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-bottom"><span>Ketertagihan WP — DSPC</span><span>Terima kasih 🙏 · diskusi</span></div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<div class="counter" id="counter">01 / 12</div>
+<div class="hint">←/→ navigasi · O overview · F fullscreen · P print/PDF</div>
+<div class="navbtns">
+  <button id="btnPrev" title="Sebelumnya">←</button>
+  <button id="btnNext" title="Berikutnya">→</button>
+</div>
+
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  const total=slides.length;
+  const counter=document.getElementById('counter');
+  const progress=document.getElementById('progress');
+  let cur=0;
+  function pad(n){return String(n).padStart(2,'0')}
+  function show(i){
+    cur=Math.max(0,Math.min(total-1,i));
+    slides.forEach((s,idx)=>s.classList.toggle('active',idx===cur));
+    counter.textContent=pad(cur+1)+' / '+pad(total);
+    progress.style.width=((cur+1)/total*100)+'%';
+    history.replaceState(null,'','#'+(cur+1));
+  }
+  document.getElementById('btnPrev').onclick=()=>show(cur-1);
+  document.getElementById('btnNext').onclick=()=>show(cur+1);
+  addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();show(cur+1)}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(cur-1)}
+    else if(e.key==='Home'){show(0)}
+    else if(e.key==='End'){show(total-1)}
+    else if(e.key==='o'||e.key==='O'){
+      document.body.classList.toggle('overview');
+      slides.forEach(s=>{
+        if(document.body.classList.contains('overview')){
+          s.classList.add('shrunken');
+          s.querySelector('.slide-inner').style.transform='scale(.278)';
+        }else{
+          s.classList.remove('shrunken');
+          s.querySelector('.slide-inner').style.transform='';
+        }
+      });
+    }
+    else if(e.key==='f'||e.key==='F'){
+      document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
+    }
+    else if(e.key==='p'||e.key==='P'){print()}
+  });
+  slides.forEach((s,idx)=>{
+    s.addEventListener('click',e=>{
+      if(document.body.classList.contains('overview')){show(idx);dispatchEvent(new KeyboardEvent('keydown',{key:'o'}));return}
+    });
+  });
+  const h=parseInt(location.hash.slice(1));
+  show(isNaN(h)?0:h-1);
+})();
+</script>
+</body>
+</html>
